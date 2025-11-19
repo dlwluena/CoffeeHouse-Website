@@ -37,7 +37,7 @@ h4 {
 }
 h5 {
   font-family: 'Playfair Display', serif;
-  color: var(--dark-bg); /* Reverted to Dark Coffee for Modals/Cart H5 */
+  color: var(--light-bg); /* Reverted to Dark Coffee for Modals/Cart H5 */
   font-size: 1.25rem;
   font-weight: 700;
 }
