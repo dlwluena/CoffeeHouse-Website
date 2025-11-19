@@ -54,6 +54,3 @@ git clone [https://github.com/YOUR-USERNAME/coffee-shop-site.git](https://github
 ```
 2. Open index.html in your browser.
 Recommended: Use Live Server in VS Code for the best experience
-
-
-```
