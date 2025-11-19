@@ -1,4 +1,4 @@
-# The Coffee House 
+# The Coffee House ☕︎
 
 A modern, responsive website designed for a premium coffee shop experience. This project features a dynamic shopping cart system, smooth navigation, and a user-friendly checkout process with advanced form validations.
 
