@@ -6,6 +6,13 @@
   --dark-bg: #362214; /* Very Dark Coffee */
 }
 
+/* --- BUG FIX: Sayfa İçi Kaydırma ve Scroll Bar Ayarı --- */
+html {
+  scroll-behavior: smooth;
+  /* Navbar yüksekliği (~80px) kadar pay bırakır, başlıklar menü altında kalmaz */
+  scroll-padding-top: 90px; 
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   color: #333;
@@ -35,9 +42,12 @@ h4 {
   color: var(--dark-bg);
   font-size: 1.4rem;
 }
+
+/* --- VISUAL FIX: H5 Rengi --- */
+/* Genel h5 rengini koyu yaptık ki beyaz kartlarda okunsun */
 h5 {
   font-family: 'Playfair Display', serif;
-  color: var(--light-bg); /* Reverted to Dark Coffee for Modals/Cart H5 */
+  color: var(--primary-color); 
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -100,7 +110,7 @@ h6 {
 .hero-section .lead {
   font-size: 1.8rem; 
   margin-bottom: 3rem; 
-  color: var(--secondary-color); /* Cream Coffee color added */
+  color: var(--secondary-color); 
 }
 
 /* General Button Styles */
@@ -195,9 +205,9 @@ footer a:hover { color: var(--light-bg); }
   border-bottom: 2px solid var(--primary-color);
 }
 
-/* Modal Title (H5) */
+/* Modal Title (H5) - Koyu zemin üzerinde olduğu için açık renk override ediyoruz */
 #checkoutModal .modal-title {
-  color: var(--light-bg); 
+  color: var(--light-bg) !important; 
   font-family: 'Playfair Display', serif;
   font-weight: bold;
 }
@@ -241,7 +251,7 @@ footer a:hover { color: var(--light-bg); }
 #checkoutModal .form-control:focus {
   background-color: #fff;
   border-color: var(--primary-color); 
-  box-shadow: 0 0 0 0.25rem rgba(160, 82, 45, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(160, 82, 45, 0.15); /* Gölge rengini biraz daha soft yaptım */
 }
 
 /* Icon Boxes */
@@ -294,6 +304,10 @@ footer a:hover { color: var(--light-bg); }
   color: var(--secondary-color); 
   border-bottom: 1px solid var(--primary-color);
 }
+/* Cart Title - Header içi (Override) */
+#cartOffcanvas .offcanvas-title {
+  color: var(--light-bg) !important;
+}
 
 #cartOffcanvas .offcanvas-header .btn-close {
   filter: invert(1); 
@@ -315,4 +329,26 @@ footer a:hover { color: var(--light-bg); }
 .offcanvas-footer h5 span {
     color: var(--primary-color) !important; 
     font-weight: 700;
+}
+
+/* --- MOBILE FIXES (MEDIA QUERY) --- */
+@media (max-width: 768px) {
+
+  /* 1. Background Problem Solution */
+  .hero-section {
+  background-attachment: scroll !important; /* 'Scroll' is required instead of 'fixed' on mobile */
+  background-position: center center !important;
+  height: 70vh; /* We can make it a little shorter on mobile */
+  }
+  
+  /* 2. Text Size and Shadow Fix */
+  .hero-section .display-4 {
+  font-size: 2.8rem; /* Let's make the text a little smaller on mobile */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9); /* Let's thin out the shadow, remove the mud look */
+  
+  .hero-section .lead {
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+  }
+  }
 }

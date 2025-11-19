@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return; 
     }
     
-    renderCart(); // Re-render the cart to update quantities and buttons
+    renderCart(); 
   });
 
   // 4. CHECKOUT
@@ -154,7 +154,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // --- VALIDATION & CONSTRAINTS ---
+  // --- VALIDATION & CONSTRAINTS & UX IMPROVEMENTS ---
+
+  const inputCard = document.getElementById('card-number');
+  const inputExpiry = document.getElementById('card-expiry');
+  const inputCvv = document.getElementById('card-cvv');
 
   // Name Input Control
   const nameInputs = [document.getElementById('card-name'), document.getElementById('nameInput')];
@@ -166,11 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Card Number and Icon Control
-  const cardInput = document.getElementById('card-number');
+  // Card Number Formatting & UX
   const cardTypeIcon = document.getElementById('card-type-icon');
-  if(cardInput) {
-    cardInput.addEventListener('input', function(e) {
+  if(inputCard) {
+    inputCard.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       value = value.substring(0, 16);
       let formattedValue = (value.match(/.{1,4}/g) || []).join(' ');
@@ -182,46 +185,56 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value.startsWith('4')) { iconClass = 'bi-visa text-primary fs-4'; }
         else if (value.startsWith('5')) { iconClass = 'bi-mastercard text-danger fs-4'; }
         else { iconClass = ''; }
-        
         cardTypeIcon.innerHTML = iconClass ? `<i class="bi ${iconClass}"></i>` : '';
       }
-    });
-  }
 
-  // CVV (DÜZELTİLDİ: 3 karakterden fazlasını engellemek için kısıtlama eklendi)
-  const cvvInput = document.getElementById('card-cvv');
-  if(cvvInput) {
-    cvvInput.addEventListener('input', function(e) {
-      this.value = this.value.replace(/\D/g, '').substring(0, 3); // Yalnızca rakamları tut ve 3 haneye kısıtla
-    });
-  }
-
-  // Expiry Date Formatting
-  const dateInput = document.getElementById('card-expiry');
-  if(dateInput) {
-    dateInput.addEventListener('input', function(e) {
-      let value = this.value.replace(/\D/g, '');
-      if (value.length >= 2) {
-        // Ay kısmı 01-12 arasında değilse, 12'ye kısıtla (bu sadece formatlama, validasyon submit'te yapılır)
-        let monthPart = parseInt(value.substring(0, 2), 10);
-        if (monthPart > 12) {
-            monthPart = 12; // 12'den büyükse 12 olarak göster
-        }
-        
-        value = monthPart.toString().padStart(2, '0') + '/' + value.substring(2, 4);
+      // UX: Auto-Focus to Expiry Date
+      if (e.target.value.length === 19) {
+        if(inputExpiry) inputExpiry.focus();
       }
+    });
+  }
+
+  // CVV Control
+  if(inputCvv) {
+    inputCvv.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').substring(0, 3); 
+    });
+  }
+
+  // Expiry Date Formatting & UX
+  if(inputExpiry) {
+    inputExpiry.addEventListener('input', function(e) {
+      const inputType = e.inputType; // Silme işlemi mi kontrol et
+      let value = this.value.replace(/\D/g, ''); // Sadece rakamları al
+      
+      // Otomatik slash (/) ekleme
+      if (value.length >= 2 && inputType !== 'deleteContentBackward') {
+         let month = value.substring(0, 2);
+         let year = value.substring(2, 4);
+         
+         // Ay 12'den büyükse 12 yapma validasyonu (isteğe bağlı görsel düzeltme)
+         if(parseInt(month) > 12) month = '12';
+
+         value = month + (value.length > 2 ? '/' + year : '');
+      }
+      
       this.value = value;
+
+      // UX: Auto-Focus to CVV
+      if (this.value.length === 5) {
+        if(inputCvv) inputCvv.focus();
+      }
     });
   }
   
-  // 5. PAYMENT FORM SUBMISSION (With Full Validation)
+  // 5. PAYMENT FORM SUBMISSION
   const paymentForm = document.getElementById('payment-form');
 
   if(paymentForm){
     paymentForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Submit anında input değerlerini tekrar al
       const submitCardInput = document.getElementById('card-number');
       const submitExpiryInput = document.getElementById('card-expiry'); 
       const submitCvvInput = document.getElementById('card-cvv'); 
@@ -229,65 +242,54 @@ document.addEventListener('DOMContentLoaded', function() {
       const rawCardNumber = submitCardInput.value.replace(/\s/g, ''); 
       const expiryValue = submitExpiryInput.value;
       
-      // --- 1. Card Number Validation (16 digits) ---
+      // --- Validations ---
       if (rawCardNumber.length !== 16) {
         alert("Please enter a valid 16-digit card number.");
         submitCardInput.focus();
         return; 
       }
       
-      // --- 2. Expiry Date Validation (MM/YY) ---
-      
       const parts = expiryValue.split('/');
       const month = parseInt(parts[0], 10);
       const year = parseInt(parts[1], 10);
       
-      // Check format
       if (parts.length !== 2 || isNaN(month) || isNaN(year) || expiryValue.length !== 5) {
           alert("Please enter the expiry date in MM/YY format (e.g., 12/26).");
           submitExpiryInput.focus();
           return; 
       }
-      
-      // Check month (1-12)
       if (month < 1 || month > 12) {
           alert("The expiry month must be between 01 and 12.");
           submitExpiryInput.focus();
           return; 
       }
 
-      // Year Validation
-      const currentYear = new Date().getFullYear() % 100; // e.g., 2025 -> 25
-      const currentMonth = new Date().getMonth() + 1; // 1-12
+      const currentYear = new Date().getFullYear() % 100; 
+      const currentMonth = new Date().getMonth() + 1; 
       
-      // Check if expired year
       if (year < currentYear) {
           alert("The card has expired. Please check the expiry year.");
           submitExpiryInput.focus();
           return; 
       }
-      
-      // Check if expired month in current year
       if (year === currentYear && month < currentMonth) {
           alert("The card has expired. Please check the expiry month.");
           submitExpiryInput.focus();
           return; 
       }
       
-      // --- 3. CVV Validation (3 digits) ---
       if (submitCvvInput.value.length !== 3) {
           alert("Please enter a valid 3-digit CVV/CVC.");
           submitCvvInput.focus();
           return; 
       }
 
-      // If all controls pass, start the payment simulation
+      // Simulation
       const submitBtn = paymentForm.querySelector('button[type="submit"]');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = 'Processing...';
       submitBtn.disabled = true;
 
-      // Successful payment simulation
       setTimeout(function() {
         const checkoutModalEl = document.getElementById('checkoutModal');
         const checkoutModalInstance = bootstrap.Modal.getInstance(checkoutModalEl);
