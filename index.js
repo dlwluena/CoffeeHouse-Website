@@ -1,5 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
   
+  // --- FIX 1: CLOSE THE MENU WHEN CLICKING THE LINK --- 
+  const navLinks = document.querySelectorAll('.navbar-nav .nav-link'); 
+  const navbarCollapse = document.getElementById('navbarNav'); 
+
+  navLinks.forEach(link => { 
+  link.addEventListener('click', () => { 
+  if (navbarCollapse.classList.contains('show')) { 
+  const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse); 
+  if (bsCollapse) bsCollapse.hide(); 
+  } 
+  }); 
+  }); 
+
+  // --- FIX 2 (ADDED): CLOSE THE MENU WHEN SCROLLING ---
+  window.addEventListener('scroll', function() {
+  // If the menu is open (if the 'show' class is present)
+  if (navbarCollapse.classList.contains('show')) {
+  const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+  if (bsCollapse) {
+  bsCollapse.hide();
+  }
+  }
+  });
+  // -------
+
   let cart = [];
   const cartButtons = document.querySelectorAll('.add-to-cart-btn');
   const cartItemsContainer = document.getElementById('cart-items');

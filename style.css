@@ -74,9 +74,8 @@ h6 {
 .navbar-brand:hover, .nav-link:hover {
   color: var(--light-bg) !important;
 }
-.navbar-toggler-icon {
-  filter: invert(1);
-}
+
+/* DÜZELTME: Buradaki invert kodu silindi, ikon artık beyaz görünecek. */
 
 /* Hero Section */
 .hero-section {
@@ -345,10 +344,10 @@ footer a:hover { color: var(--light-bg); }
   .hero-section .display-4 {
   font-size: 2.8rem; /* Let's make the text a little smaller on mobile */
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9); /* Let's thin out the shadow, remove the mud look */
-  
+  }
+
   .hero-section .lead {
   font-size: 1.2rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
-  }
   }
 }
